@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
   const authGeneration = useRef(0);
 
   const goGuest = useCallback(() => {
+    localStorage.removeItem("nuzio_token");
     setUser(null);
     setPreferences(null);
     setStatus("guest");
