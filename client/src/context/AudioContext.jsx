@@ -40,6 +40,7 @@ export function AudioProvider({ children }) {
   useEffect(() => {
     const el = new Audio();
     el.preload = "auto";
+    el.crossOrigin = "anonymous";
     audioRef.current = el;
 
     const onTime = () =>
