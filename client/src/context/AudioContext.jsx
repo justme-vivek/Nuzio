@@ -92,7 +92,8 @@ export function AudioProvider({ children }) {
           .then(({ data }) => {
             const b = data?.briefing;
             if (b?.status === "ready" && b.audioFileId) {
-              const src = `${API_URL}/audio/${b.audioFileId}`;
+              const token = localStorage.getItem("nuzio_token");
+              const src = `${API_URL}/audio/${b.audioFileId}${token ? `?token=${encodeURIComponent(token)}` : ""}`;
               srcRef.current = src;
               el.src = src;
               pendingSeek.current = saved.time || 0;
