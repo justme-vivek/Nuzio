@@ -1,7 +1,7 @@
-import Voice from '../models/Voice.js';
-import { asyncHandler } from '../utils/asyncHandler.js';
-import { ApiError } from '../utils/ApiError.js';
-import { ensurePreview } from '../services/voice/voice.service.js';
+import Voice from "../models/Voice.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ensurePreview } from "../services/voice/voice.service.js";
 
 // GET /api/v1/voices
 export const listVoices = asyncHandler(async (req, res) => {
@@ -17,7 +17,11 @@ export const listVoices = asyncHandler(async (req, res) => {
       description: v.description,
       tag: v.tag,
       languages: v.languages,
-      previews: v.previews ? Object.fromEntries(Object.entries(v.previews).map(([k, val]) => [k, String(val)])) : {},
+      previews: v.previews
+        ? Object.fromEntries(
+            Object.entries(v.previews).map(([k, val]) => [k, String(val)]),
+          )
+        : {},
     })),
   });
 });
@@ -25,9 +29,13 @@ export const listVoices = asyncHandler(async (req, res) => {
 // GET /api/v1/voices/:id/preview?lang=en -> redirects to the audio stream
 export const getVoicePreview = asyncHandler(async (req, res) => {
   const voice = await Voice.findById(req.params.id);
-  if (!voice) throw new ApiError(404, 'Voice not found');
+  if (!voice) throw new ApiError(404, "Voice not found");
 
-  const lang = req.query.lang === 'hi' ? 'hi' : 'en';
+  const lang = req.query.lang === "hi" ? "hi" : "en";
   const fileId = await ensurePreview(voice, lang);
-  return res.redirect(302, `/api/v1/audio/${fileId}`);
+  const token =
+    typeof req.query.token === "string"
+      ? `?token=${encodeURIComponent(req.query.token)}`
+      : "";
+  return res.redirect(302, `/api/v1/audio/${fileId}${token}`);
 });

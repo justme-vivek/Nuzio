@@ -36,7 +36,8 @@ export const requireAuth = asyncHandler(async (req, res, next) => {
     /^Bearer\s+/i,
     "",
   );
-  const token = req.cookies?.nuzio_token || bearer;
+  const queryToken = typeof req.query.token === "string" ? req.query.token : "";
+  const token = req.cookies?.nuzio_token || bearer || queryToken;
   if (!token) throw new ApiError(401, "Not authenticated");
 
   let payload;
